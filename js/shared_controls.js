@@ -2838,10 +2838,11 @@ $(".set-selector").change(function () {
 			var set = regSets ? correctHiddenPower(setdex[pokemonName][setName]) : randset;
 			
 
-			if (set.level < 1) {
-				pokeObj.find(".level").val(resolveRelativeSetLevel(set, $('#levelR1').val()));
+			var easyOffset = (typeof easyModeLevelOffset === "function") ? easyModeLevelOffset(set) : 0;
+			if (set.level < 1 || typeof set.sublevel != "undefined") {
+				pokeObj.find(".level").val(Math.max(1, resolveRelativeSetLevel(set, $('#levelR1').val()) + easyOffset));
 			} else {
-				pokeObj.find(".level").val(set.level);
+				pokeObj.find(".level").val(Math.max(1, parseInt(set.level, 10) + easyOffset));
 			}
 			
 
@@ -3372,6 +3373,9 @@ function createPokemon(pokeInfo, customMoves=false, ignoreStatMods=false) {
 			tmpLvl = resolveRelativeSetLevel(set, $('#levelR1').val())
 			set.level = tmpLvl	
 			// console.log(`adjusting ${name} to level ${tmpLvl} for pokemon creation`)
+		}
+		if (typeof easyModeLevelOffset === "function") {
+			tmpLvl = Math.max(1, parseInt(tmpLvl, 10) + easyModeLevelOffset(set))
 		}
 
 		let status = CALC_STATUS[getNormalizedSetStatus(set)]

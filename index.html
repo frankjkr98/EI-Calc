@@ -2,6 +2,19 @@
 <html lang="en">
 
 <head>
+    <script>
+    // Emerald Imperium fork: open straight into EI 1.3 when no dataset is given in the URL.
+    (function () {
+        try {
+            var p = new URLSearchParams(window.location.search);
+            if (!p.get("data")) {
+                var d = { data: "imp13", dmgGen: "8", gen: "8", types: "6", noSwitch: "1", evs: "0", view: "calculator" };
+                for (var k in d) { if (!p.has(k)) { p.set(k, d[k]); } }
+                window.location.replace(window.location.pathname + "?" + p.toString() + window.location.hash);
+            }
+        } catch (e) {}
+    })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark">
@@ -390,6 +403,8 @@
                 <button type="button" class="main-view-tab" data-view="box">Box</button>
                 <button type="button" class="main-view-tab" data-view="fragsheet">Fragsheet</button>
                 <button type="button" class="main-view-tab" id="main-nav-battle-log" data-view="battle-log">Battle Log</button>
+                <button type="button" class="main-view-tab" id="matrix-toggle" title="Team vs Team: your party against the selected trainer's whole team">Matrix</button>
+                <button type="button" class="main-view-tab" id="easy-mode-toggle" title="Easy mode: every trainer Pok&eacute;mon is 2 levels lower. Applies on top of the level cap for scaled trainers.">Easy &minus;2</button>
             </div>
             <div id="main-view-version-tabs" aria-label="Game versions"></div>
             <div id="dev-data-controls" class="dev-data-controls" hidden>
@@ -2676,6 +2691,8 @@
     <script type="text/javascript" src="./calc/adaptable.js?afeb3759"></script>
     <script type="text/javascript" src="./calc/index.js?4025a2a4"></script>
     <script type="text/javascript" src="./js/shared_controls.js?2d332dc9"></script>
+    <script type="text/javascript" src="./js/calc_ui/easy_mode.js"></script>
+    <script type="text/javascript" src="./js/calc_ui/matrix_view.js"></script>
     <script type="text/javascript" src="./js/index_randoms_controls.js?b492f1fe"></script>
     <script type="text/javascript" src="./js/moveset_import.js?gen5bridge1"></script>
     <script type="text/javascript" src="./js/fragsheet/frags.js?mobilefrags1"></script>

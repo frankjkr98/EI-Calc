@@ -598,10 +598,11 @@ function bruteForceImportPokeEmeraldSave(saveFile, options = {}) {
             } else {
                 abilitySlot = decrypted[misc_index * 3 + 2] >> 29 & 0b11;
 
-                if (abilsPrimary[speciesName]) {
-                    abilitySlot = abilsPrimary[speciesName][abilitySlot];
-                } else if (abils[speciesName]) {
-                    abilitySlot = abils[speciesName][abilitySlot];
+                var abilityTableLegacy = abilsPrimary[speciesName] || abils[speciesName];
+                if (abilityTableLegacy) {
+                    // Emerald Imperium fork: an empty ability slot falls back to slot 0, as in the game.
+                    var resolvedLegacy = abilityTableLegacy[abilitySlot];
+                    abilitySlot = (!resolvedLegacy || resolvedLegacy === "None") ? abilityTableLegacy[0] : resolvedLegacy;
                 } else {
                     console.log(`${speciesName} no ability found`);
                 }
@@ -1007,11 +1008,14 @@ function gen3ResolveAbilityName(speciesName, speciesId, rawAbilityIndex, trainer
         }
     }
 
-    if (abilsPrimary[speciesName]) {
-        return abilsPrimary[speciesName][rawAbilityIndex];
-    }
-    if (abils[speciesName]) {
-        return abils[speciesName][rawAbilityIndex];
+    // Emerald Imperium fork: like the game (GetMonAbility), an empty ability slot falls back to slot 0.
+    var abilityTable = abilsPrimary[speciesName] || abils[speciesName];
+    if (abilityTable) {
+        var resolved = abilityTable[rawAbilityIndex];
+        if (!resolved || resolved === "None") {
+            resolved = abilityTable[0];
+        }
+        return resolved;
     }
     return rawAbilityIndex;
 }
