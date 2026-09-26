@@ -1046,7 +1046,8 @@ function getCurrentBackupFileName() {
 
 const backupFileCacheKeys = {
     ek: "cf296d42",
-    ek2: "508955ac"
+    ek2: "508955ac",
+    "imp_1-3": "ei260926"
 };
 
 const trainerOrderFileCacheKeys = {
