@@ -8,6 +8,26 @@
     window.easyModeLevelOffset = function (set) {
         return (isEasy() && set && typeof set.tr_id !== "undefined") ? -2 : 0;
     };
+    // --- Level-cap fallback ---------------------------------------------------------------
+    // HZLA uses the level shown in the enemy panel as the "cap" when no cap has been typed.
+    // That number already contains the displayed Pokemon's offset and the Easy-mode -2, so
+    // feeding it back in makes levels drift on every click. We remember what is on screen and
+    // recover the real cap from it: cap = shown level - easy offset - the set's own offset.
+    var displayed = null;
+    window.rememberDisplayedTrainerSet = function (set, shownLevel) {
+        displayed = { set: set, level: parseInt(shownLevel, 10) };
+    };
+    window.inferLevelCapFallback = function (panelLevel) {
+        var shown = parseInt(panelLevel, 10);
+        if (!Number.isFinite(shown)) { return panelLevel; }
+        if (!displayed || !displayed.set) { return shown; }
+        var set = displayed.set;
+        var rel = (typeof set.sublevel !== "undefined") ? parseInt(set.sublevel, 10) : (parseInt(set.level, 10) < 1 ? parseInt(set.level, 10) : 0);
+        if (!Number.isFinite(rel)) { rel = 0; }
+        var cap = shown - window.easyModeLevelOffset(set) - rel;
+        return cap > 0 ? cap : shown;
+    };
+
     function reloadTrainerSets() {
         $(".set-selector").each(function () {
             var v = $(this).val();

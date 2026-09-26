@@ -2839,10 +2839,14 @@ $(".set-selector").change(function () {
 			
 
 			var easyOffset = (typeof easyModeLevelOffset === "function") ? easyModeLevelOffset(set) : 0;
+			var capFallback = (typeof inferLevelCapFallback === "function") ? inferLevelCapFallback($('#levelR1').val()) : $('#levelR1').val();
 			if (set.level < 1 || typeof set.sublevel != "undefined") {
-				pokeObj.find(".level").val(Math.max(1, resolveRelativeSetLevel(set, $('#levelR1').val()) + easyOffset));
+				pokeObj.find(".level").val(Math.max(1, resolveRelativeSetLevel(set, capFallback) + easyOffset));
 			} else {
 				pokeObj.find(".level").val(Math.max(1, parseInt(set.level, 10) + easyOffset));
+			}
+			if (pokeObj.attr("id") === "p2" && typeof rememberDisplayedTrainerSet === "function") {
+				rememberDisplayedTrainerSet(set, pokeObj.find(".level").val());
 			}
 			
 
@@ -3370,7 +3374,8 @@ function createPokemon(pokeInfo, customMoves=false, ignoreStatMods=false) {
 		let tmpLvl = set.level
 
 		if ((parseInt(set.level) < 1 || typeof set.sublevel != "undefined")) {
-			tmpLvl = resolveRelativeSetLevel(set, $('#levelR1').val())
+			var capFallbackForSet = (typeof inferLevelCapFallback === "function") ? inferLevelCapFallback($('#levelR1').val()) : $('#levelR1').val()
+			tmpLvl = resolveRelativeSetLevel(set, capFallbackForSet)
 			set.level = tmpLvl	
 			// console.log(`adjusting ${name} to level ${tmpLvl} for pokemon creation`)
 		}
